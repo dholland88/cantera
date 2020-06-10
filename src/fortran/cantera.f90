@@ -9,7 +9,7 @@
 MODULE CANTERA
 
   USE cantera_thermo
-  USE cantera_thermo
+  USE cantera_multiphase
   USE cantera_kinetics
   USE cantera_transport
   USE cantera_xml
@@ -36,8 +36,21 @@ MODULE CANTERA
      MODULE PROCEDURE ctkin_advanceCoverages
   END INTERFACE advanceCoverages
 
+  INTERFACE addPhase
+     MODULE PROCEDURE ctmultiphase_addphase
+  END INTERFACE addPhase
+
+  INTERFACE addSpeciesMoles
+     MODULE PROCEDURE ctmultiphase_addSpeciesMoles
+  END INTERFACE addSpeciesMoles
+
+  INTERFACE charge
+     MODULE PROCEDURE ctmultiphase_charge
+  END INTERFACE charge
+
   INTERFACE chemPotentials
      MODULE PROCEDURE ctthermo_chemPotentials
+     MODULE PROCEDURE ctmultiphase_getChemPotentials
   END INTERFACE chemPotentials
 
   INTERFACE child
@@ -56,6 +69,10 @@ MODULE CANTERA
      MODULE PROCEDURE ctthermo_cp_mole
   END INTERFACE cp_mole
 
+  INTERFACE cp
+     MODULE PROCEDURE ctmultiphase_cp
+  END INTERFACE cp
+
   INTERFACE cv_mass
      MODULE PROCEDURE ctthermo_cv_mass
   END INTERFACE cv_mass
@@ -70,7 +87,12 @@ MODULE CANTERA
 
   INTERFACE elementIndex
      MODULE PROCEDURE ctthermo_elementIndex
+     MODULE PROCEDURE ctmultiphase_elementIndex
   END INTERFACE elementIndex
+
+  INTERFACE elementMoles
+     MODULE PROCEDURE ctmultiphase_elementMoles
+  END INTERFACE elementMoles
 
   INTERFACE enthalpy_mass
      MODULE PROCEDURE ctthermo_enthalpy_mass
@@ -88,12 +110,21 @@ MODULE CANTERA
      MODULE PROCEDURE ctthermo_entropy_mole
   END INTERFACE entropy_mole
 
+  INTERFACE enthalpy
+     MODULE PROCEDURE ctmultiphase_enthalpy
+  END INTERFACE enthalpy
+
+  INTERFACE entropy
+     MODULE PROCEDURE ctmultiphase_entropy
+  END INTERFACE entropy
+
   INTERFACE getEosType
      MODULE PROCEDURE ctthermo_getEosType
   END INTERFACE getEosType
 
   INTERFACE equilibrate
      MODULE PROCEDURE ctthermo_equilibrate
+     MODULE PROCEDURE ctmultiphase_equilibrate
   END INTERFACE equilibrate
 
   INTERFACE getAtomicWeights
@@ -124,8 +155,13 @@ MODULE CANTERA
      MODULE PROCEDURE ctkin_getDestructionRates
   END INTERFACE getDestructionRates
 
+  INTERFACE getElemAbundances
+     MODULE PROCEDURE ctmultiphase_getElemAbundances
+  END INTERFACE getElemAbundances
+
   INTERFACE getElementName
      MODULE PROCEDURE ctthermo_getElementName
+     MODULE PROCEDURE ctmultiphase_elementName
   END INTERFACE getElementName
 
   INTERFACE getEnthalpies_RT
@@ -162,10 +198,16 @@ MODULE CANTERA
 
   INTERFACE getMoleFractions
      MODULE PROCEDURE ctthermo_getMoleFractions
+     MODULE PROCEDURE ctmultiphase_getMoleFractions
   END INTERFACE getMoleFractions
+
+  INTERFACE getMoles
+     MODULE PROCEDURE ctmultiphase_getMoles
+  END INTERFACE getMoles
 
   INTERFACE getMolecularWeights
      MODULE PROCEDURE ctthermo_getMolecularWeights
+     MODULE PROCEDURE ctmultiphase_getMolecularWeights
   END INTERFACE getMolecularWeights
 
   INTERFACE getMultiDiffCoeffs
@@ -184,6 +226,14 @@ MODULE CANTERA
      MODULE PROCEDURE ctthermo_getPartialMolarIntEnerg_R
   END INTERFACE getPartialMolarIntEnergies
 
+  INTERFACE getPhase
+     MODULE PROCEDURE ctmultiphase_getphase
+  END INTERFACE getPhase
+
+  INTERFACE phaseMoles
+     MODULE PROCEDURE ctmultiphase_phaseMoles
+  END INTERFACE phaseMoles
+
   INTERFACE getReactionString
      MODULE PROCEDURE ctkin_getReactionString
   END INTERFACE getReactionString
@@ -194,6 +244,7 @@ MODULE CANTERA
 
   INTERFACE getSpeciesName
      MODULE PROCEDURE ctthermo_getSpeciesName
+     MODULE PROCEDURE ctmultiphase_speciesName
   END INTERFACE getSpeciesName
 
   INTERFACE getTag
@@ -224,6 +275,10 @@ MODULE CANTERA
      MODULE PROCEDURE ctfunc_importInterface
   END INTERFACE importInterface
 
+  INTERFACE init
+     MODULE PROCEDURE ctmultiphase_init
+  END INTERFACE init
+
   INTERFACE intEnergy_mass
      MODULE PROCEDURE ctthermo_intEnergy_mass
   END INTERFACE intEnergy_mass
@@ -231,6 +286,10 @@ MODULE CANTERA
   INTERFACE intEnergy_mole
      MODULE PROCEDURE ctthermo_intEnergy_mole
   END INTERFACE intEnergy_mole
+
+  INTERFACE intEnergy
+     MODULE PROCEDURE ctmultiphase_intEnergy
+  END INTERFACE intEnergy
 
   INTERFACE isReversible
      MODULE PROCEDURE ctkin_isReversible
@@ -254,6 +313,7 @@ MODULE CANTERA
 
   INTERFACE maxTemp
      MODULE PROCEDURE ctthermo_maxTemp
+     MODULE PROCEDURE ctmultiphase_maxTemp
   END INTERFACE maxTemp
 
   INTERFACE meanMolecularWeight
@@ -262,7 +322,12 @@ MODULE CANTERA
 
   INTERFACE minTemp
      MODULE PROCEDURE ctthermo_minTemp
+     MODULE PROCEDURE ctmultiphase_minTemp
   END INTERFACE minTemp
+
+  INTERFACE mixture_report
+     MODULE PROCEDURE ctmultiphase_report
+  END INTERFACE mixture_report
 
   INTERFACE molarDensity
      MODULE PROCEDURE ctthermo_molarDensity
@@ -270,6 +335,7 @@ MODULE CANTERA
 
   INTERFACE moleFraction
      MODULE PROCEDURE ctthermo_moleFraction
+     MODULE PROCEDURE ctmultiphase_moleFraction
   END INTERFACE moleFraction
 
   INTERFACE multiplier
@@ -278,6 +344,7 @@ MODULE CANTERA
 
   INTERFACE nAtoms
      MODULE PROCEDURE ctthermo_nAtoms
+     MODULE PROCEDURE ctmultiphase_nAtoms
   END INTERFACE nAtoms
 
   INTERFACE nChildren
@@ -294,6 +361,7 @@ MODULE CANTERA
 
   INTERFACE nSpecies
      MODULE PROCEDURE ctthermo_nSpecies
+     MODULE PROCEDURE ctmultiphase_nSpecies
   END INTERFACE nSpecies
 
   INTERFACE nTotalSpecies
@@ -302,11 +370,21 @@ MODULE CANTERA
 
   INTERFACE nPhases
      MODULE PROCEDURE ctkin_nPhases
+     MODULE PROCEDURE ctmultiphase_nPhases
   END INTERFACE nPhases
+
+  INTERFACE phaseCharge
+     MODULE PROCEDURE ctmultiphase_phaseCharge
+  END INTERFACE phaseCharge
 
   INTERFACE phaseIndex
      MODULE PROCEDURE ctkin_phaseIndex
+     MODULE PROCEDURE ctmultiphase_phaseIndex
   END INTERFACE phaseIndex
+
+  INTERFACE phaseName
+     MODULE PROCEDURE ctmultiphase_phaseName
+  END INTERFACE phaseName
 
   INTERFACE phase_report
      MODULE PROCEDURE ctfunc_phase_report
@@ -314,6 +392,7 @@ MODULE CANTERA
 
   INTERFACE pressure
      MODULE PROCEDURE ctthermo_pressure
+     MODULE PROCEDURE ctmultiphase_pressure
   END INTERFACE pressure
 
   INTERFACE productStoichCoeff
@@ -352,6 +431,14 @@ MODULE CANTERA
      MODULE PROCEDURE ctthermo_setMoleFractionsByName
   END INTERFACE setMoleFractionsByName
 
+  INTERFACE setMoles
+     MODULE PROCEDURE ctmultiphase_setMoles
+  END INTERFACE setMoles
+
+  INTERFACE setMolesByName
+     MODULE PROCEDURE ctmultiphase_setMolesByName
+  END INTERFACE setMolesByName
+
   INTERFACE setMultiplier
      MODULE PROCEDURE ctkin_setMultiplier
   END INTERFACE setMultiplier
@@ -360,8 +447,17 @@ MODULE CANTERA
      MODULE PROCEDURE ctrans_setParameters
   END INTERFACE setParameters
 
+  INTERFACE setPhaseMoles
+     MODULE PROCEDURE ctmultiphase_setPhaseMoles
+  END INTERFACE setPhaseMoles
+
+  INTERFACE setPhaseMoleFractions
+     MODULE PROCEDURE ctmultiphase_setPhaseMoleFractions
+  END INTERFACE setPhaseMoleFractions
+
   INTERFACE setPressure
      MODULE PROCEDURE ctthermo_setPressure
+     MODULE PROCEDURE ctmultiphase_setPressure
   END INTERFACE setPressure
 
   INTERFACE setState_HP
@@ -375,6 +471,14 @@ MODULE CANTERA
   INTERFACE setState_SV
      MODULE PROCEDURE ctthermo_setState_SV
   END INTERFACE setState_SV
+
+  INTERFACE setState_TP
+     MODULE PROCEDURE ctmultiphase_setState_TP
+  END INTERFACE setState_TP
+
+  INTERFACE setState_TPMoles
+     MODULE PROCEDURE ctmultiphase_setState_TPMoles
+  END INTERFACE setState_TPMoles
 
   INTERFACE setState_TPX
      MODULE PROCEDURE ctthermo_setState_TPX
@@ -402,14 +506,26 @@ MODULE CANTERA
 
   INTERFACE setTemperature
      MODULE PROCEDURE ctthermo_setTemperature
+     MODULE PROCEDURE ctmultiphase_setTemperature
   END INTERFACE setTemperature
+
+  INTERFACE speciesPhaseIndex
+     MODULE PROCEDURE ctmultiphase_speciesPhaseIndex
+  END INTERFACE speciesPhaseIndex
 
   INTERFACE speciesIndex
      MODULE PROCEDURE ctthermo_speciesIndex
+     MODULE PROCEDURE ctmultiphase_speciesIndex
+     MODULE PROCEDURE ctmultiphase_speciesIndexByName
   END INTERFACE speciesIndex
+
+  INTERFACE speciesMoles
+     MODULE PROCEDURE ctmultiphase_speciesMoles
+  END INTERFACE speciesMoles
 
   INTERFACE temperature
      MODULE PROCEDURE ctthermo_temperature
+     MODULE PROCEDURE ctmultiphase_temperature
   END INTERFACE temperature
 
   INTERFACE electricalConductivity
@@ -420,13 +536,24 @@ MODULE CANTERA
      MODULE PROCEDURE ctrans_thermalConductivity
   END INTERFACE thermalConductivity
 
+  INTERFACE uploadMoleFractionsFromPhases
+     MODULE PROCEDURE ctmultiphase_uploadmolefractions
+  END INTERFACE uploadMoleFractionsFromPhases
+
   INTERFACE viscosity
      MODULE PROCEDURE ctrans_viscosity
   END INTERFACE viscosity
+
+  INTERFACE volume
+     MODULE PROCEDURE ctmultiphase_volume
+  END INTERFACE volume
 
   INTERFACE write
      MODULE PROCEDURE ctxml_write
   END INTERFACE write
 
-END MODULE CANTERA
+  INTERFACE newMultiPhase
+     MODULE PROCEDURE ctmultiphase_newMultiPhase
+  END INTERFACE newMultiPhase
 
+END MODULE CANTERA

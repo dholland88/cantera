@@ -485,5 +485,228 @@ interface
         integer, intent(in) :: ikin
     end function ctbuildSolutionFromXML
 
+    integer function mphase_addmultiphase()
+    end function mphase_addmultiphase
+
+    integer function mphase_addphase(n, p, x)
+        integer, intent(in) :: n
+        integer, intent(in) :: p
+        double precision, intent(in) :: x
+    end function mphase_addphase
+
+    integer function mphase_elementindex(n, nm)
+        integer, intent(in) :: n
+        character*(*), intent(in) :: nm
+    end function mphase_elementindex
+
+    integer function mphase_elementname(n, k, nm)
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+        character*(*), intent(out) :: nm
+    end function mphase_elementname
+
+    integer function mphase_speciesname(n, k, nm)
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+        character*(*), intent(out) :: nm
+    end function mphase_speciesname
+
+    double precision function mphase_natoms(n, k, m)
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+        integer, intent(in) :: m
+    end function mphase_natoms
+
+    integer function mphase_getmolefractions(n, x)
+        integer, intent(in) :: n
+        double precision, intent(out) :: x(*)
+    end function mphase_getmolefractions
+
+    integer function mphase_init(n)
+        integer, intent(in) :: n
+    end function mphase_init
+
+    integer function mphase_phasename(n, p, nm)
+        integer, intent(in) :: n
+        integer, intent(in) :: p
+        character*(*), intent(out) :: nm
+    end function mphase_phasename
+
+    integer function mphase_phaseindex(n, nm)
+        integer, intent(in) :: n
+        character*(*), intent(in) :: nm
+    end function mphase_phaseindex
+
+    double precision function mphase_phasemoles(n, p)
+        integer, intent(in) :: n
+        integer, intent(in) :: p
+    end function mphase_phaseMoles
+
+    integer function mphase_setphasemoles(n, p, x)
+        integer, intent(in) :: n
+        integer, intent(in) :: p
+        double precision, intent(in) :: x
+    end function mphase_setphasemoles
+
+    integer function mphase_speciesmoles(n, k)
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+    end function mphase_speciesmoles
+
+    integer function mphase_speciesindex(n, k, p)
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+        integer, intent(in) :: p
+    end function mphase_speciesindex
+
+    integer function mphase_speciesindexbyname(n, nm, pname)
+        integer, intent(in) :: n
+        character*(*), intent(in) :: nm
+        character*(*), intent(in) :: pname
+    end function mphase_speciesindexbyname
+
+    double precision function mphase_mintemp(n)
+        integer, intent(in) :: n
+    end function mphase_mintemp
+
+    double precision function mphase_maxtemp(n)
+        integer, intent(in) :: n
+    end function mphase_maxtemp
+
+    double precision function mphase_charge(n)
+        integer, intent(in) :: n
+    end function mphase_charge
+
+    double precision function mphase_phasecharge(n, p)
+        integer, intent(in) :: n
+        integer, intent(in) :: p
+    end function mphase_phasecharge
+
+    double precision function mphase_elementmoles(n, m)
+        integer, intent(in) :: n
+        integer, intent(in) :: m
+    end function mphase_elementmoles
+
+    integer function mphase_getchempotentials(n, mu)
+        integer, intent(in) :: n
+        double precision, intent(out) :: mu(*)
+    end function mphase_getchempotentials
+
+    double precision function mphase_temperature(n)
+        integer, intent(in) :: n
+    end function mphase_temperature
+
+    integer function mphase_equil(n, XY, solver, rtol, max_steps, max_iter, estimate_equil, log_level)
+        integer, intent(in) :: n
+        character*(*), intent(in) :: XY
+        character*(*), intent(in) :: solver
+        double precision, intent(in) :: rtol
+        integer, intent(in) :: max_steps
+        integer, intent(in) :: max_iter
+        integer, intent(in) :: estimate_equil
+        integer, intent(in) :: log_level
+    end function mphase_equil
+
+    integer function mphase_settemperature(n, t)
+        integer, intent(in) :: n
+        double precision, intent(in) :: t
+    end function mphase_settemperature
+
+    integer function mphase_set_tp(n, v1, v2)
+        integer, intent(in) :: n
+        double precision, intent(in) :: v1
+        double precision, intent(in) :: v2
+    end function mphase_set_tp
+
+    integer function mphase_set_tpmoles(n, v1, v2, x)
+        integer, intent(in) :: n
+        double precision, intent(in) :: v1
+        double precision, intent(in) :: v2
+        double precision, intent(in) :: x(*)
+    end function mphase_set_tpmoles
+
+    double precision function mphase_volume(n)
+        integer, intent(in) :: n
+    end function mphase_volume
+
+    double precision function mphase_pressure(n)
+        integer, intent(in) :: n
+    end function mphase_pressure
+
+    integer function mphase_setpressure(n, p)
+        integer, intent(in) :: n
+        double precision, intent(in) :: p
+    end function mphase_setpressure
+
+    double precision function mphase_enthalpy(n)
+        integer, intent(in) :: n
+    end function mphase_enthalpy
+
+    double precision function mphase_intenergy(n)
+        integer, intent(in) :: n
+    end function mphase_intenergy
+
+    double precision function mphase_entropy(n)
+        integer, intent(in) :: n
+    end function mphase_entropy
+
+    double precision function mphase_gibbs(n)
+        integer, intent(in) :: n
+    end function mphase_gibbs
+
+    double precision function mphase_cp(n)
+        integer, intent(in) :: n
+    end function mphase_cp
+
+    integer function mphase_speciesphaseindex(n, k)
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+    end function mphase_speciesphaseindex
+
+    double precision function mphase_molefraction(n, k)
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+    end function mphase_molefraction
+
+    integer function mphase_setphasemolefractions(n, p, x)
+        integer, intent(in) :: n
+        integer, intent(in) :: p
+        double precision, intent(in) :: x(*)
+    end function mphase_setphasemolefractions
+
+    integer function mphase_setmoles(n, x)
+        integer, intent(in) :: n
+        double precision, intent(in) :: x(*)
+    end function mphase_setmoles
+
+    integer function mphase_setmolesbyname(n, x)
+        integer, intent(in) :: n
+        character*(*), intent(in) :: x
+    end function mphase_setmolesbyname
+
+    double precision function mphase_getmoles(n, m)
+    integer, intent(in) :: n
+    double precision, intent(out) :: m(*)
+end function mphase_getmoles
+
+    integer function mphase_addspeciesmoles(n, k, x)
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+        double precision, intent(in) :: x
+    end function mphase_addspeciesmoles
+
+    integer function mphase_getelemabundances(n, v1)
+        integer, intent(in) :: n
+        double precision, intent(out) :: v1(*)
+    end function mphase_getelemabundances
+
+    integer function mphase_uploadmolefractions(n)
+        integer, intent(in) :: n
+    end function mphase_uploadmolefractions
+
+    integer function mphase_report(n)
+        integer, intent(in) :: n
+    end function mphase_report
+
 end interface
 end module fct

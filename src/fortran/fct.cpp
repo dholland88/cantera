@@ -18,6 +18,7 @@
 #include "cantera/kinetics/importKinetics.h"
 #include "clib/Cabinet.h"
 #include "cantera/kinetics/InterfaceKinetics.h"
+#include "cantera/equil/MultiPhase.h"
 
 #include "cantera/clib/clib_defs.h"
 #include "cantera/clib/ct.h"
@@ -26,6 +27,7 @@ using namespace Cantera;
 
 typedef Cabinet<XML_Node, false> XmlCabinet;
 typedef Cabinet<ThermoPhase> ThermoCabinet;
+typedef Cabinet<MultiPhase> MultiPhaseCabinet;
 typedef Cabinet<Kinetics> KineticsCabinet;
 typedef Cabinet<Transport> TransportCabinet;
 
@@ -56,6 +58,11 @@ ThermoPhase* _fth(const integer* n)
 Transport* _ftrans(const integer* n)
 {
     return &TransportCabinet::item(*n);
+}
+
+MultiPhase* _fmulti(const integer* n)
+{
+    return &MultiPhaseCabinet::item(*n);
 }
 
 } // unnamed namespace
@@ -1151,5 +1158,456 @@ extern "C" {
             return handleAllExceptions(-1, ERR);
         }
         return 0;
+    }
+
+    //-------------------- Multiphase ---------------------------
+
+    integer mphase_addmultiphase_()
+    {
+        try {
+            MultiPhase* multi = new MultiPhase();
+            return MultiPhaseCabinet::add(multi);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+    }
+
+    status_t mphase_addphase_(const integer* n, const integer* p, doublereal* x)
+    {
+        try {
+            _fmulti(n)->addPhase(_fph(p), *x);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+    }
+
+    integer mphase_elementindex_(const integer* n, char* nm, ftnlen lennm)
+    {
+        try {
+            std::string enm = f2string(nm, lennm);
+            return _fmulti(n)->elementIndex(enm) + 1;
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+    }
+
+    status_t mphase_elementname_(const integer* n, integer* k, char* nm, ftnlen lennm)
+    {
+        try {
+            MultiPhase* mp =  _fmulti(n);
+            std::string enm = _fmulti(n)->elementName(*k-1);
+
+            int lout = std::min(lennm, (int) enm.size());
+            std::copy(enm.c_str(), enm.c_str() + lout, nm);
+            for (int nn = lout; nn < lennm; nn++) {
+                nm[nn] = ' ';
+            }
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_speciesname_(const integer* n, integer* k, char* nm, ftnlen lennm)
+    {
+        try {
+            MultiPhase* mp =  _fmulti(n);
+            std::string spnm = _fmulti(n)->speciesName(*k-1);
+
+            int lout = std::min(lennm, (int) spnm.size());
+            std::copy(spnm.c_str(), spnm.c_str() + lout, nm);
+            for (int nn = lout; nn < lennm; nn++) {
+                nm[nn] = ' ';
+            }
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    doublereal mphase_natoms_(const integer* n, const integer* k, const integer* m)
+    {
+        try {
+            return _fmulti(n)->nAtoms(*k-1, *m-1);
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    status_t mphase_getmolefractions_(const integer* n, doublereal* x)
+    {
+        try {
+            _fmulti(n)->getMoleFractions(x);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_init_(const integer* n)
+    {
+        try {
+           _fmulti(n)->init();
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+    }
+
+
+    status_t mphase_phasename_(const integer* n, integer* p, char* nm, ftnlen lennm)
+    {
+        try {
+            MultiPhase* mp =  _fmulti(n);
+            std::string pnm = _fmulti(n)->phaseName(*p-1);
+
+            int lout = std::min(lennm, (int) pnm.size());
+            std::copy(pnm.c_str(), pnm.c_str() + lout, nm);
+            for (int nn = lout; nn < lennm; nn++) {
+                nm[nn] = ' ';
+            }
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    integer mphase_phaseindex_(const integer* n, char* pn, ftnlen lenpn)
+    {
+        try {
+            std::string ppm = f2string(pn, lenpn);
+            return _fmulti(n)->phaseIndex(ppm) + 1;
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+    }
+
+    doublereal mphase_phasemoles_(const integer* n, const integer* m)
+    {
+        try {
+            return _fmulti(n)->phaseMoles(*m-1);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_setphasemoles_(const integer* n, const integer* p, doublereal* x)
+    {
+        try {
+            _fmulti(n)->setPhaseMoles(*p-1, *x);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    doublereal mphase_speciesmoles_(const integer* n, const integer* k)
+    {
+        try {
+            return _fmulti(n)->speciesMoles(*k-1);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    integer mphase_speciesindex_(const integer* n, const integer* k, const integer* p)
+    {
+        try {
+            return _fmulti(n)->speciesIndex(*k-1, *p-1) + 1;
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+    }
+
+    integer mphase_speciesindexbyname_(const integer* n, char* nm,  char* pn, ftnlen lennm, ftnlen lenpn)
+    {
+        try {
+            std::string spnm = f2string(nm, lennm);
+            std::string sppm = f2string(pn, lenpn);
+            return _fmulti(n)->speciesIndex(spnm,sppm) + 1;
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+    }
+
+    doublereal mphase_mintemp_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->minTemp();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    doublereal mphase_maxtemp_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->maxTemp();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+
+    doublereal mphase_charge_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->charge();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    doublereal mphase_phasecharge_(const integer* n, const integer* p)
+    {
+        try {
+            return _fmulti(n)->phaseCharge(*p-1);
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    doublereal mphase_elementmoles_(const integer* n, const integer* m)
+    {
+        try {
+            return _fmulti(n)->elementMoles(*m-1);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_getchempotentials_(const integer* n, doublereal* mu)
+    {
+        try {
+            _fmulti(n)->getChemPotentials(mu);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    doublereal mphase_temperature_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->temperature();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    status_t mphase_equil_(const integer* n, char* XY, char* solver, doublereal* rtol,
+                            integer* max_steps, integer* max_iter, integer* estimate_equil,
+                            integer* log_level, ftnlen lenxy, ftnlen lensolver)
+    {
+        try {
+            _fmulti(n)->equilibrate(f2string(XY,lenxy), f2string(solver,lensolver), *rtol,
+                                    *max_steps, *max_iter, *estimate_equil, *log_level);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_settemperature_(const integer* n, const doublereal* t)
+    {
+        try {
+            _fmulti(n)->setTemperature(*t);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_set_tp_(const integer* n, doublereal* v1, doublereal* v2)
+    {
+        try {
+            _fmulti(n)->setState_TP(*v1, *v2);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_set_tpmoles_(const integer* n, doublereal* v1, doublereal* v2, doublereal* x)
+    {
+        try {
+            _fmulti(n)->setState_TPMoles(*v1, *v2, x);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    doublereal mphase_volume_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->volume();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    doublereal mphase_pressure_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->pressure();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    status_t mphase_setpressure_(const integer* n, doublereal* p)
+    {
+        try {
+            _fmulti(n)->setPressure(*p);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    doublereal mphase_enthalpy_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->enthalpy();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    doublereal mphase_intenergy_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->IntEnergy();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    doublereal mphase_entropy_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->entropy();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    doublereal mphase_gibbs_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->gibbs();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    doublereal mphase_cp_(const integer* n)
+    {
+        try {
+            return _fmulti(n)->cp();
+        } catch (...) {
+            return handleAllExceptions(DERR, DERR);
+        }
+    }
+
+    integer mphase_speciesphaseindex_(const integer* n, const integer* k)
+    {
+        try {
+            return _fmulti(n)->speciesPhaseIndex(*k-1) + 1;
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+    }
+
+    doublereal mphase_molefraction_(const integer* n, const integer* k)
+    {
+        try {
+            _fmulti(n)->moleFraction(*k-1);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_setphasemolefractions_(const integer* n, const integer* p, const doublereal* x)
+    {
+        try {
+            _fmulti(n)->setPhaseMoleFractions(*p-1, x);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_setmoles_(const integer* n, doublereal* x)
+    {
+        try {
+            _fmulti(n)->setMoles(x);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_setmolesbyname_(const integer* n, char* x, ftnlen lx)
+    {
+        try {
+            _fmulti(n)->setMolesByName(f2string(x, lx));
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_getmoles_(const integer* n, doublereal* m)
+    {
+        try {
+            _fmulti(n)->getMoles(m);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_addspeciesmoles_(const integer* n, const integer* k, doublereal* x)
+    {
+        try {
+            _fmulti(n)->addSpeciesMoles(*k-1, *x);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_getelemabundances_(const integer* n, doublereal* m)
+    {
+        try {
+            _fmulti(n)->getElemAbundances(m);
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+   status_t mphase_uploadmolefractions_(const integer* n)
+    {
+        try {
+            _fmulti(n)->uploadMoleFractionsFromPhases();
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
+        return 0;
+    }
+
+    status_t mphase_report_(const integer* n)
+    {
+        try {
+           std::cout << *_fmulti(n) << std::endl;
+        } catch (...) {
+            return handleAllExceptions(-1, ERR);
+        }
     }
 }
